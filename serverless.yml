@@ -1,0 +1,42 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: quantegy-log
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: soak
+  region: us-east-1
+  lambdaHashingVersion: 20201221
+  iam:
+    role:
+      managedPolicies:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonSNSFullAccess
+        - arn:aws:iam::aws:policy/AmazonEventBridgeFullAccess
+        - arn:aws:iam::aws:policy/AmazonTimestreamFullAccess
+
+functions:
+  log-quantegy-data:
+    handler: handler.main
+
+    events:
+      - sns: log-quantegy-data-soak
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
