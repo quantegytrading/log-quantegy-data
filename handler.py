@@ -5,18 +5,25 @@ import boto3
 from botocore.config import Config
 import time
 
+
 def current_milli_time():
     return str(round(time.time() * 1000))
 
 
-def write_records(client, current_value):
+def write_records(client, current_value, algorithm, env, portfolio, exchange, data_type):
     print("Writing records")
     current_time = current_milli_time()
 
     dimensions = [
         {'Name': 'region', 'Value': 'us-east-1'},
         {'Name': 'az', 'Value': 'az1'},
-        {'Name': 'hostname', 'Value': 'host1'}
+        {'Name': 'hostname', 'Value': 'host1'},
+        {'Name': 'algorithm', 'Value': algorithm},
+        {'Name': 'environment', 'Value': env},
+        {'Name': 'portfolio_id', 'Value': portfolio},
+        {'Name': 'exchange', 'Value': exchange},
+        {'Name': 'data_type', 'Value': data_type}
+
     ]
 
     current_value = {
@@ -46,9 +53,14 @@ def main(event, context):
     session = boto3.Session()
     message = json.loads(event['Records'][0]['Sns']['Message'])
     current_value = message['current_value']
+    portfolio_id = message['portfolio_id']
+    algorithm = message['algorithm']
+    exchange = message['exchange']
+    env = message['env']
+
     print("current_value = " + str(current_value))
     write_client = session.client('timestream-write', config=Config(read_timeout=20, max_pool_connections=5000, retries={'max_attempts': 10}))
-    write_records(write_client, str(current_value))
+    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, "live")
 
 
 if __name__ == "__main__":
