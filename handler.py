@@ -14,7 +14,7 @@ def write_records(client, current_value, algorithm, env, portfolio, exchange, da
     print("Writing records")
     if backtest_time is None:
         current_time = current_milli_time()
-    else
+    else:
         current_time = backtest_time
 
     dimensions = [
