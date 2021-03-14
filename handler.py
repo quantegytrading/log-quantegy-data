@@ -23,6 +23,7 @@ def write_records(client, current_value, algorithm, env, portfolio, exchange, da
         except Exception:
             date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S')
             current_time = str(time.mktime(date.timetuple()) * 1000)
+        print(current_time)
 
 
     dimensions = [
