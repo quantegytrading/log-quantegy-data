@@ -69,7 +69,7 @@ def main(event, context):
 
     if env == "backtest":
         write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, backtest_time)
-    else
+    else:
         write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env)
 
 
