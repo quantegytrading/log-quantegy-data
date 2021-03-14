@@ -1,5 +1,6 @@
 # handler.py
 import json
+from datetime import datetime
 
 import boto3
 from botocore.config import Config
@@ -16,6 +17,7 @@ def write_records(client, current_value, algorithm, env, portfolio, exchange, da
     if backtest_time is None:
         current_time = current_milli_time()
     else:
+        current_time = datetime.strptime(backtest_time, "%Y-%m-%d %H:%M:%S.%f").timestamp()
         current_time = str(backtest_time)
 
     dimensions = [
