@@ -17,8 +17,12 @@ def write_records(client, current_value, algorithm, env, portfolio, exchange, da
     if backtest_time is None:
         current_time = current_milli_time()
     else:
-        date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S[.%fZ]')
-        current_time = time.mktime(date.timetuple())
+        try:
+            date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S[.%fZ]')
+            current_time = time.mktime(date.timetuple())
+        except Exception:
+            date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S')
+            current_time = time.mktime(date.timetuple())
 
     dimensions = [
         {'Name': 'region', 'Value': 'us-east-1'},
