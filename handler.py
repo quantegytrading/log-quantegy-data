@@ -15,7 +15,8 @@ def write_records(client, current_value, algorithm, env, portfolio, exchange, da
     if backtest_time is None:
         current_time = current_milli_time()
     else:
-        current_time = backtest_time
+        print("backtest-time:" + str(backtest_time))
+        current_time = str(backtest_time)
 
     dimensions = [
         {'Name': 'region', 'Value': 'us-east-1'},
