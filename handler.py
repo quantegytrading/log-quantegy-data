@@ -18,7 +18,7 @@ def write_records(client, current_value, algorithm, env, portfolio, exchange, da
         current_time = current_milli_time()
     else:
         try:
-            date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S[.%fZ]')
+            date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S[.%f]')
             current_time = time.mktime(date.timetuple())
         except Exception:
             date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S')
