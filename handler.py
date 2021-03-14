@@ -12,10 +12,10 @@ def current_milli_time():
 
 def write_records(client, current_value, algorithm, env, portfolio, exchange, data_type, backtest_time=None):
     print("Writing records")
+    print("backtest-time:" + str(backtest_time))
     if backtest_time is None:
         current_time = current_milli_time()
     else:
-        print("backtest-time:" + str(backtest_time))
         current_time = str(backtest_time)
 
     dimensions = [
