@@ -22,7 +22,8 @@ def write_records(client, current_value, algorithm, env, portfolio, exchange, da
             current_time = time.mktime(date.timetuple())
         except Exception:
             date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S')
-            current_time = time.mktime(date.timetuple())
+            current_time = str(time.mktime(date.timetuple()))
+
 
     dimensions = [
         {'Name': 'region', 'Value': 'us-east-1'},
