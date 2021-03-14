@@ -10,9 +10,12 @@ def current_milli_time():
     return str(round(time.time() * 1000))
 
 
-def write_records(client, current_value, algorithm, env, portfolio, exchange, data_type):
+def write_records(client, current_value, algorithm, env, portfolio, exchange, data_type, backtest_time=None):
     print("Writing records")
-    current_time = current_milli_time()
+    if backtest_time is None:
+        current_time = current_milli_time()
+    else
+        current_time = backtest_time
 
     dimensions = [
         {'Name': 'region', 'Value': 'us-east-1'},
@@ -56,11 +59,19 @@ def main(event, context):
     portfolio_id = message['portfolio_id']
     algorithm = message['algorithm']
     exchange = message['exchange']
+    backtest_time = message['backtest-time']
     env = message['env']
+
+
 
     print("current_value = " + str(current_value))
     write_client = session.client('timestream-write', config=Config(read_timeout=20, max_pool_connections=5000, retries={'max_attempts': 10}))
-    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, "live")
+
+    if env == "backtest":
+        write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, backtest_time)
+    else
+        write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env)
+
 
 
 if __name__ == "__main__":
