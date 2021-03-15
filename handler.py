@@ -75,6 +75,7 @@ def main(event, context):
     env = message['env']
 
     print("current_value = " + str(current_value))
+    print("portfolio = " + portfolio)
     write_client = session.client('timestream-write', config=Config(read_timeout=20, max_pool_connections=5000, retries={'max_attempts': 10}))
 
     if env == "backtest":
