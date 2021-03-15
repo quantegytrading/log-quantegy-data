@@ -1,6 +1,5 @@
 # handler.py
 import json
-from datetime import datetime
 
 import boto3
 from botocore.config import Config
@@ -35,9 +34,10 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
             'MeasureName': 'portfolio_item',
             'MeasureValue': elem,
             'MeasureValueType': 'VARCHAR',
-            'Time': current_time
+            'Time': current_milli_time()
         }
         portfolio_items.append(item)
+        time.sleep(0.05)
 
     current_value = {
         'Dimensions': dimensions,
