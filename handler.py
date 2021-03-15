@@ -13,18 +13,17 @@ def current_milli_time():
 
 def write_records(client, current_value, algorithm, env, portfolio, exchange, data_type, backtest_time=None):
     print("Writing records")
-    print("backtest-time:" + str(backtest_time))
-    if backtest_time is None:
-        current_time = current_milli_time()
-    else:
-        try:
-            date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S.%f')
-            current_time = str(int(time.mktime(date.timetuple())))
-        except Exception:
-            date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S')
-            current_time = str(int(time.mktime(date.timetuple()) * 1000))
-        print(current_time)
-
+    # print("backtest-time:" + str(backtest_time))
+    # if backtest_time is None:
+    current_time = current_milli_time()
+    # else:
+    #     try:
+    #         date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S.%f')
+    #         current_time = str(int(time.mktime(date.timetuple())))
+    #     except Exception:
+    #         date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S')
+    #         current_time = str(int(time.mktime(date.timetuple()) * 1000))
+    #     print(current_time)
 
     dimensions = [
         {'Name': 'region', 'Value': 'us-east-1'},
@@ -71,8 +70,6 @@ def main(event, context):
     backtest_time = message['backtest-time']
     env = message['env']
 
-
-
     print("current_value = " + str(current_value))
     write_client = session.client('timestream-write', config=Config(read_timeout=20, max_pool_connections=5000, retries={'max_attempts': 10}))
 
@@ -80,7 +77,6 @@ def main(event, context):
         write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, backtest_time)
     else:
         write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env)
-
 
 
 if __name__ == "__main__":
