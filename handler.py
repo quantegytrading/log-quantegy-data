@@ -11,19 +11,11 @@ def current_milli_time():
     return str(round(time.time() * 1000))
 
 
-def write_records(client, current_value, algorithm, env, portfolio, exchange, data_type, backtest_time=None):
+def write_records(client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio, backtest_time=None):
     print("Writing records")
-    # print("backtest-time:" + str(backtest_time))
-    # if backtest_time is None:
     current_time = current_milli_time()
-    # else:
-    #     try:
-    #         date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S.%f')
-    #         current_time = str(int(time.mktime(date.timetuple())))
-    #     except Exception:
-    #         date = datetime.strptime(backtest_time, '%Y-%m-%d %H:%M:%S')
-    #         current_time = str(int(time.mktime(date.timetuple()) * 1000))
-    #     print(current_time)
+
+    portfolioj = json.loads(portfolio)
 
     dimensions = [
         {'Name': 'region', 'Value': 'us-east-1'},
@@ -31,11 +23,21 @@ def write_records(client, current_value, algorithm, env, portfolio, exchange, da
         {'Name': 'hostname', 'Value': 'host1'},
         {'Name': 'algorithm', 'Value': algorithm},
         {'Name': 'environment', 'Value': env},
-        {'Name': 'portfolio_id', 'Value': portfolio},
+        {'Name': 'portfolio_id', 'Value': portfolio_id},
         {'Name': 'exchange', 'Value': exchange},
         {'Name': 'data_type', 'Value': data_type}
 
     ]
+    portfolio_items = []
+    for elem in portfolioj:
+        item = {
+            'Dimensions': dimensions,
+            'MeasureName': 'portfolio_item',
+            'MeasureValue': elem,
+            'MeasureValueType': 'VARCHAR',
+            'Time': current_time
+        }
+        portfolio_items.append(item)
 
     current_value = {
         'Dimensions': dimensions,
@@ -45,7 +47,8 @@ def write_records(client, current_value, algorithm, env, portfolio, exchange, da
         'Time': current_time
     }
 
-    records = [current_value]
+    portfolio_items.append(current_value)
+    records = portfolio_items
 
     try:
         result = client.write_records(DatabaseName='quantegy-soak-db', TableName='portfolio-value-data',
@@ -65,6 +68,7 @@ def main(event, context):
     message = json.loads(event['Records'][0]['Sns']['Message'])
     current_value = message['current_value']
     portfolio_id = message['portfolio_id']
+    portfolio = message['portfolio']
     algorithm = message['algorithm']
     exchange = message['exchange']
     backtest_time = message['backtest-time']
@@ -74,9 +78,9 @@ def main(event, context):
     write_client = session.client('timestream-write', config=Config(read_timeout=20, max_pool_connections=5000, retries={'max_attempts': 10}))
 
     if env == "backtest":
-        write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, backtest_time)
+        write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
     else:
-        write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env)
+        write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
 
 
 if __name__ == "__main__":
