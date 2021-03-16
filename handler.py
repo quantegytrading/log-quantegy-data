@@ -11,7 +11,7 @@ def current_milli_time():
 
 
 def write_records(client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio, backtest_time=None):
-    print("Writing records")
+    print("Writing records to " + env)
     current_time = current_milli_time()
 
     portfolioj = json.loads(portfolio)
@@ -73,12 +73,14 @@ def main(event, context):
     exchange = message['exchange']
     backtest_time = message['backtest-time']
     env = message['env']
+    print(message)
 
     print("current_value = " + str(current_value))
     print("portfolio = " + portfolio)
     write_client = session.client('timestream-write', config=Config(read_timeout=20, max_pool_connections=5000, retries={'max_attempts': 10}))
 
     if env == "backtest":
+        time.sleep(.05)
         write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
     else:
         write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
