@@ -36,6 +36,7 @@ def write_es():
         "director": "Bennett Miller",
         "year": "2011"
     }
+    print(es.info())
 
     es.index(index="movies", doc_type="_doc", id="5", body=document)
 
