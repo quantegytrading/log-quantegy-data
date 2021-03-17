@@ -12,7 +12,7 @@ def current_milli_time():
     return str(round(time.time() * 1000))
 
 
-def write_es():
+def write_es(current_value, algorithm, portfolio_id, portfolio, backtest_time):
     # client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio, backtest_time=None):
 
     host = ''  # For example, my-test-domain.us-east-1.es.amazonaws.com
@@ -32,15 +32,18 @@ def write_es():
     )
 
     document = {
-        "title": "Moneyball",
-        "director": "Bennett Miller",
-        "year": "2011"
+        "current_value": str(current_value),
+        "algorithm": algorithm,
+        "portfolio-id": portfolio_id,
+        "portfolio": portfolio,
+        "time": backtest_time
     }
     print(es.info())
 
-    es.index(index="movies", doc_type="_doc", id="5", body=document)
+    # es.index(index="quantegy-backtest", doc_type="_doc", id="5", body=document)
+    es.index(index="quantegy-backtest", doc_type="_doc", body=document)
 
-    print(es.get(index="movies", doc_type="_doc", id="5"))
+    # print(es.get(index="quantegy-backtest", doc_type="_doc", id="5"))
 
 
 def write_records(client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio,
@@ -126,10 +129,10 @@ def main(event, context):
 
     if env == "backtest":
         time.sleep(.05)
-        write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
+        write_es(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
+        # write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
     else:
         write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
-        write_es()
 
 
 if __name__ == "__main__":
