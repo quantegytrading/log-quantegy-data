@@ -23,7 +23,7 @@ def write_es():
     awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
 
     es = Elasticsearch(
-        hosts=[{'host': 'https://search-quantegy-njo457ktl3upnncyeubz6p25v4.us-east-1.es.amazonaws.com/', 'port': 443}],
+        hosts=[{'host': 'search-quantegy-njo457ktl3upnncyeubz6p25v4.us-east-1.es.amazonaws.com', 'port': 443}],
         http_auth=awsauth,
         use_ssl=True,
         verify_certs=True,
