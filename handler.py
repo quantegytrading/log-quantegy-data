@@ -17,11 +17,11 @@ def write_es(current_value, algorithm, portfolio_id, portfolio, backtest_time):
     # client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio, backtest_time=None):
 
     host = 'search-quantegy-njo457ktl3upnncyeubz6p25v4.us-east-1.es.amazonaws.com'  # For example, my-test-domain.us-east-1.es.amazonaws.com
-    region = 'us-east-1'  # e.g. us-west-1
-
-    service = 'es'
-    credentials = boto3.Session().get_credentials()
-    awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
+    # region = 'us-east-1'  # e.g. us-west-1
+    #
+    # service = 'es'
+    # credentials = boto3.Session().get_credentials()
+    # awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
 
     try:
         t = time.mktime(
@@ -40,7 +40,7 @@ def write_es(current_value, algorithm, portfolio_id, portfolio, backtest_time):
 
     es = Elasticsearch(
         hosts=[{'host': host, 'port': 443}],
-        http_auth=awsauth,
+        http_auth=('quantegy', 'vuGE4-zv~H4}YMuQ'),
         use_ssl=True,
         verify_certs=True,
         connection_class=RequestsHttpConnection,
