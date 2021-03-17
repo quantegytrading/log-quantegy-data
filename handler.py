@@ -23,12 +23,20 @@ def write_es(current_value, algorithm, portfolio_id, portfolio, backtest_time):
     credentials = boto3.Session().get_credentials()
     awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
 
-    t = time.mktime(
-        datetime.datetime.strptime(
-            backtest_time,
-            "%Y-%m-%d %H:%M:%S[.%f]"
-        ).timetuple()
-    )
+    try:
+        t = time.mktime(
+            datetime.datetime.strptime(
+                backtest_time,
+                "%Y-%m-%d %H:%M:%S.%f"
+            ).timetuple()
+        )
+    except Exception:
+        t = time.mktime(
+            datetime.datetime.strptime(
+                backtest_time,
+                "%Y-%m-%d %H:%M:%S"
+            ).timetuple()
+        )
 
     es = Elasticsearch(
         hosts=[{'host': host, 'port': 443}],
