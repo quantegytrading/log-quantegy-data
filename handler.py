@@ -1,4 +1,5 @@
 # handler.py
+import datetime
 import json
 
 import boto3
@@ -15,16 +16,23 @@ def current_milli_time():
 def write_es(current_value, algorithm, portfolio_id, portfolio, backtest_time):
     # client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio, backtest_time=None):
 
-    host = ''  # For example, my-test-domain.us-east-1.es.amazonaws.com
-    region = ''  # e.g. us-west-1
+    host = 'search-quantegy-njo457ktl3upnncyeubz6p25v4.us-east-1.es.amazonaws.com'  # For example, my-test-domain.us-east-1.es.amazonaws.com
+    region = 'us-east-1'  # e.g. us-west-1
 
     service = 'es'
     credentials = boto3.Session().get_credentials()
     awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
 
+    t = time.mktime(
+        datetime.datetime.strptime(
+            backtest_time,
+            "%Y-%m-%d %H:%M:%S[.%f]"
+        ).timetuple()
+    )
+
     es = Elasticsearch(
-        hosts=[{'host': 'search-quantegy-njo457ktl3upnncyeubz6p25v4.us-east-1.es.amazonaws.com', 'port': 443}],
-        http_auth=('quantegy', 'vuGE4-zv~H4}YMuQ'),
+        hosts=[{'host': host, 'port': 443}],
+        http_auth=awsauth,
         use_ssl=True,
         verify_certs=True,
         connection_class=RequestsHttpConnection,
@@ -32,11 +40,11 @@ def write_es(current_value, algorithm, portfolio_id, portfolio, backtest_time):
     )
 
     document = {
-        "current_value": str(current_value),
+        "current_value": float(current_value),
         "algorithm": algorithm,
         "portfolio-id": portfolio_id,
         "portfolio": portfolio,
-        "time": backtest_time
+        "time": t
     }
     print(es.info())
 
