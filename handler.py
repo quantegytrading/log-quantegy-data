@@ -27,7 +27,8 @@ def write_es():
         http_auth=awsauth,
         use_ssl=True,
         verify_certs=True,
-        connection_class=RequestsHttpConnection
+        connection_class=RequestsHttpConnection,
+        region='us-east-1'
     )
 
     document = {
