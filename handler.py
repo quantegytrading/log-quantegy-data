@@ -15,6 +15,7 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
     current_time = current_milli_time()
 
     portfolioj = json.loads(portfolio)
+    percent_value = (((current_value/10000) * 100) -100)
 
     dimensions = [
         {'Name': 'region', 'Value': 'us-east-1'},
@@ -47,7 +48,16 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
         'Time': current_time
     }
 
+    percent_value = {
+        'Dimensions': dimensions,
+        'MeasureName': 'percent_value',
+        'MeasureValue': percent_value,
+        'MeasureValueType': 'DOUBLE',
+        'Time': current_time
+    }
+
     portfolio_items.append(current_value)
+    portfolio_items.append(percent_value)
     records = portfolio_items
 
     try:
