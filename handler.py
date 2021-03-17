@@ -24,7 +24,7 @@ def write_es():
 
     es = Elasticsearch(
         hosts=[{'host': 'search-quantegy-njo457ktl3upnncyeubz6p25v4.us-east-1.es.amazonaws.com', 'port': 443}],
-        http_auth=awsauth,
+        http_auth=('quantegy', 'vuGE4-zv~H4}YMuQ'),
         use_ssl=True,
         verify_certs=True,
         connection_class=RequestsHttpConnection,
