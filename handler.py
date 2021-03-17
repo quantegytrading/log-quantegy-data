@@ -52,7 +52,7 @@ def write_es(current_value, algorithm, portfolio_id, portfolio, backtest_time):
         "algorithm": algorithm,
         "portfolio-id": portfolio_id,
         "portfolio": portfolio,
-        "time": int(t/1000)
+        "time": int(t)
     }
     print(es.info())
 
