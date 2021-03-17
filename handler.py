@@ -2,6 +2,7 @@
 import json
 
 import boto3
+# from elasticsearch import Elasticsearch, RequestsHttpConnection
 # from requests_aws4auth import AWS4Auth
 from botocore.config import Config
 import time
@@ -22,7 +23,7 @@ def current_milli_time():
 #     awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
 #
 #     es = Elasticsearch(
-#         hosts=[{'host': host, 'port': 443}],
+#         hosts=[{'https://search-quantegy-njo457ktl3upnncyeubz6p25v4.us-east-1.es.amazonaws.com/': host, 'port': 443}],
 #         http_auth=awsauth,
 #         use_ssl=True,
 #         verify_certs=True,
@@ -47,7 +48,7 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
     current_time = current_milli_time()
 
     portfolioj = json.loads(portfolio)
-    percent_value = (((float(current_value)/10000.0) * 100.0) -100.0)
+    percent_value = (((float(current_value)/10000.0) * 100.0) - 100.0)
 
     dimensions = [
         {'Name': 'region', 'Value': 'us-east-1'},
@@ -83,7 +84,7 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
     percent_value = {
         'Dimensions': dimensions,
         'MeasureName': 'percent_value',
-        'MeasureValue': percent_value,
+        'MeasureValue': str(percent_value),
         'MeasureValueType': 'DOUBLE',
         'Time': current_time
     }
