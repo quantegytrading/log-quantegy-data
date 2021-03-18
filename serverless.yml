@@ -30,7 +30,7 @@ provider:
 functions:
   log-quantegy-data:
     handler: handler.main
-
+    timeout: 90
     events:
       - sns: log-quantegy-data-soak
 
