@@ -29,7 +29,7 @@ def write_mysql(current_value, algorithm, portfolio_id, portfolio, backtest_time
     token = client.generate_db_auth_token(DBHostname=ENDPOINT, Port=PORT, DBUsername=USR, Region=REGION)
 
     try:
-        conn = mysql.connector.connect(host=ENDPOINT, user=USR, passwd=token, port=PORT, database=DBNAME)
+        conn = mysql.connector.connect(host=ENDPOINT, user=USR, passwd='KQGPFU4EDLVx7D54', port=PORT, database=DBNAME)
         cur = conn.cursor()
         cur.execute("""SELECT now()""")
         query_results = cur.fetchall()
