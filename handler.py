@@ -169,13 +169,14 @@ def main(event, context):
     print("portfolio = " + portfolio)
     write_client = session.client('timestream-write', config=Config(read_timeout=20, max_pool_connections=5000, retries={'max_attempts': 10}))
 
-    if env == "backtest":
-        time.sleep(.05)
-        write_mysql(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
+    # if env == "backtest":
+        # time.sleep(.05)
+    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
+        # write_mysql(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_es(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
-    else:
-        write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
+    # else:
+    #     write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
 
 
 if __name__ == "__main__":
