@@ -23,10 +23,10 @@ def write_mysql(current_value, algorithm, portfolio_id, portfolio, backtest_time
     os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
 
     # gets the credentials from .aws/credentials
-    session = boto3.Session(profile_name='RDSCreds')
-    client = session.client('rds')
-
-    token = client.generate_db_auth_token(DBHostname=ENDPOINT, Port=PORT, DBUsername=USR, Region=REGION)
+    # session = boto3.Session(profile_name='RDSCreds')
+    # client = session.client('rds')
+    #
+    # token = client.generate_db_auth_token(DBHostname=ENDPOINT, Port=PORT, DBUsername=USR, Region=REGION)
 
     try:
         conn = mysql.connector.connect(host=ENDPOINT, user=USR, passwd='KQGPFU4EDLVx7D54', port=PORT, database=DBNAME)
