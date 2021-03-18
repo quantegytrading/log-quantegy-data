@@ -1,65 +1,91 @@
 # handler.py
-import datetime
+# import datetime
 import json
-
-import boto3
-from elasticsearch import Elasticsearch, RequestsHttpConnection
-from requests_aws4auth import AWS4Auth
+import os
+# from elasticsearch import Elasticsearch, RequestsHttpConnection
+# from requests_aws4auth import AWS4Auth
 from botocore.config import Config
 import time
+import mysql.connector
+import boto3
+
 
 
 def current_milli_time():
     return str(round(time.time() * 1000))
 
 
-def write_es(current_value, algorithm, portfolio_id, portfolio, backtest_time):
-    # client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio, backtest_time=None):
+def write_mysql(current_value, algorithm, portfolio_id, portfolio, backtest_time):
+    ENDPOINT = "quantegy.cluster-cheqyrklzyah.us-east-1.rds.amazonaws.com"
+    PORT = "3306"
+    USR = "quantegy"
+    REGION = "us-east-1"
+    os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
 
-    host = 'search-quantegy-njo457ktl3upnncyeubz6p25v4.us-east-1.es.amazonaws.com'  # For example, my-test-domain.us-east-1.es.amazonaws.com
-    region = 'us-east-1'  # e.g. us-west-1
+    # gets the credentials from .aws/credentials
+    session = boto3.Session(profile_name='RDSCreds')
+    client = session.client('rds')
 
-    service = 'es'
-    credentials = boto3.Session().get_credentials()
-    awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
+    token = client.generate_db_auth_token(DBHostname=ENDPOINT, Port=PORT, DBUsername=USR, Region=REGION)
 
     try:
-        t = time.mktime(
-            datetime.datetime.strptime(
-                backtest_time,
-                "%Y-%m-%d %H:%M:%S.%f"
-            ).timetuple()
-        )
-    except Exception:
-        t = time.mktime(
-            datetime.datetime.strptime(
-                backtest_time,
-                "%Y-%m-%d %H:%M:%S"
-            ).timetuple()
-        )
+        conn = mysql.connector.connect(host=ENDPOINT, user=USR, passwd=token, port=PORT, database=DBNAME)
+        cur = conn.cursor()
+        cur.execute("""SELECT now()""")
+        query_results = cur.fetchall()
+        print(query_results)
+    except Exception as e:
+        print("Database connection failed due to {}".format(e))
 
-    es = Elasticsearch(
-        hosts=[{'host': host, 'port': 443}],
-        http_auth=awsauth,
-        use_ssl=True,
-        verify_certs=True,
-        connection_class=RequestsHttpConnection,
-        region='us-east-1'
-    )
 
-    document = {
-        "current_value": float(current_value),
-        "algorithm": algorithm,
-        "portfolio-id": portfolio_id,
-        "portfolio": portfolio,
-        "time": int(t)
-    }
-    print(es.info())
-
-    # es.index(index="quantegy-backtest", doc_type="_doc", id="5", body=document)
-    es.index(index="quantegy-backtest", doc_type="_doc", body=document)
-
-    # print(es.get(index="quantegy-backtest", doc_type="_doc", id="5"))
+# def write_es(current_value, algorithm, portfolio_id, portfolio, backtest_time):
+#
+#     # client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio, backtest_time=None):
+#
+#     host = 'search-quantegy-njo457ktl3upnncyeubz6p25v4.us-east-1.es.amazonaws.com'  # For example, my-test-domain.us-east-1.es.amazonaws.com
+#     region = 'us-east-1'  # e.g. us-west-1
+#
+#     service = 'es'
+#     credentials = boto3.Session().get_credentials()
+#     awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
+#
+#     try:
+#         t = time.mktime(
+#             datetime.datetime.strptime(
+#                 backtest_time,
+#                 "%Y-%m-%d %H:%M:%S.%f"
+#             ).timetuple()
+#         )
+#     except Exception:
+#         t = time.mktime(
+#             datetime.datetime.strptime(
+#                 backtest_time,
+#                 "%Y-%m-%d %H:%M:%S"
+#             ).timetuple()
+#         )
+#
+#     es = Elasticsearch(
+#         hosts=[{'host': host, 'port': 443}],
+#         http_auth=awsauth,
+#         use_ssl=True,
+#         verify_certs=True,
+#         connection_class=RequestsHttpConnection,
+#         region='us-east-1'
+#     )
+#
+#     document = {
+#         "current_value": float(current_value),
+#         "algorithm": algorithm,
+#         "portfolio-id": portfolio_id,
+#         "portfolio": portfolio,
+#         "time": int(t)
+#     }
+#     print(es.info())
+#
+#     # es.index(index="quantegy-backtest", doc_type="_doc", id="5", body=document)
+#     es.index(index="quantegy-backtest", doc_type="_doc", body=document)
+#
+#     # print(es.get(index="quantegy-backtest", doc_type="_doc", id="5"))
 
 
 def write_records(client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio,
@@ -145,7 +171,8 @@ def main(event, context):
 
     if env == "backtest":
         time.sleep(.05)
-        write_es(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
+        write_mysql(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
+        # write_es(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
     else:
         write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
