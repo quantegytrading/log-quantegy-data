@@ -171,7 +171,7 @@ def main(event, context):
 
     # if env == "backtest":
         # time.sleep(.05)
-        write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
+    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
         # write_mysql(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_es(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
