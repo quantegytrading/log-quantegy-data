@@ -146,7 +146,7 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
         'Dimensions': dimensions,
         'MeasureName': 'backtest_time',
         'MeasureValue': backtest_datetime_str,
-        'MeasureValueType': 'DOUBLE',
+        'MeasureValueType': 'VARCHAR',
         'Time': current_time
     }
     records.append(portfolio_items)
