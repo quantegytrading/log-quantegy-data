@@ -1,5 +1,6 @@
 # handler.py
 # import datetime
+import datetime
 import json
 import os
 # from elasticsearch import Elasticsearch, RequestsHttpConnection
@@ -89,11 +90,14 @@ def write_mysql(current_value, algorithm, portfolio_id, portfolio, backtest_time
 
 
 def write_records(client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio,
-                      backtest_time=None):
+                      backtest_time):
 
     print("Writing records to " + env)
     current_time = current_milli_time()
 
+    backtest_datetime = datetime.datetime.timestamp(backtest_time)
+    backtest_datetime_str = backtest_datetime.strftime("%m/%d/%Y, %H:%M:%S")
+    
     portfolioj = json.loads(portfolio)
     percent_value = (((float(current_value)/10000.0) * 100.0) - 100.0)
 
@@ -171,7 +175,7 @@ def main(event, context):
 
     # if env == "backtest":
         # time.sleep(.05)
-    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
+    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
         # write_mysql(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_es(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
