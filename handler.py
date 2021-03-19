@@ -93,7 +93,6 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
                       backtest_time):
 
     print("Writing records to " + env)
-    records = []
     current_time = current_milli_time()
 
     backtest_datetime = datetime.datetime.fromtimestamp(backtest_time / 1000.0)
@@ -149,10 +148,11 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
         'MeasureValueType': 'VARCHAR',
         'Time': current_time
     }
-    records.append(portfolio_items)
-    records.append(current_value)
-    records.append(percent_value)
-    records.append(backtest_time_value)
+
+    portfolio_items.append(current_value)
+    portfolio_items.append(percent_value)
+    portfolio_items.append(backtest_time_value)
+    records = portfolio_items
 
     try:
         result = client.write_records(DatabaseName='quantegy-soak-db', TableName='portfolio-value-data',
