@@ -1,6 +1,5 @@
 # handler.py
 # import datetime
-import datetime
 import json
 import os
 # from elasticsearch import Elasticsearch, RequestsHttpConnection
@@ -90,14 +89,10 @@ def write_mysql(current_value, algorithm, portfolio_id, portfolio, backtest_time
 
 
 def write_records(client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio,
-                      backtest_time):
+                      backtest_time=None):
 
     print("Writing records to " + env)
     current_time = current_milli_time()
-
-    backtest_datetime = datetime.datetime.fromtimestamp(backtest_time / 1000.0)
-    backtest_datetime_str = backtest_datetime.strftime("%m/%d/%Y, %H:%M:%S")
-    print(backtest_datetime_str)
 
     portfolioj = json.loads(portfolio)
     percent_value = (((float(current_value)/10000.0) * 100.0) - 100.0)
@@ -141,17 +136,8 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
         'Time': current_time
     }
 
-    backtest_time_value = {
-        'Dimensions': dimensions,
-        'MeasureName': 'backtest_time',
-        'MeasureValue': backtest_datetime_str,
-        'MeasureValueType': 'VARCHAR',
-        'Time': current_time
-    }
-
     portfolio_items.append(current_value)
     portfolio_items.append(percent_value)
-    portfolio_items.append(backtest_time_value)
     records = portfolio_items
 
     try:
@@ -185,7 +171,7 @@ def main(event, context):
 
     # if env == "backtest":
         # time.sleep(.05)
-    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
+        write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio)
         # write_mysql(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_es(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
