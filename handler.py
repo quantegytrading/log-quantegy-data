@@ -97,6 +97,7 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
     current_time = current_milli_time()
 
     backtest_datetime = datetime.datetime.fromtimestamp(backtest_time / 1000.0)
+    backtest_datetime_str = backtest_datetime.strftime("%m/%d/%Y, %H:%M:%S")
 
     portfolioj = json.loads(portfolio)
     percent_value = (((float(current_value)/10000.0) * 100.0) - 100.0)
@@ -143,7 +144,7 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
     backtest_time_value = {
         'Dimensions': dimensions,
         'MeasureName': 'backtest_time',
-        'MeasureValue': str(backtest_datetime),
+        'MeasureValue': backtest_datetime_str,
         'MeasureValueType': 'DOUBLE',
         'Time': current_time
     }
