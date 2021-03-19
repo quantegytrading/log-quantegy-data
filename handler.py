@@ -140,8 +140,17 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
         'Time': current_time
     }
 
+    backtest_time_value = {
+        'Dimensions': dimensions,
+        'MeasureName': 'backtest_time',
+        'MeasureValue': str(backtest_datetime_str),
+        'MeasureValueType': 'VARCHAR',
+        'Time': current_time
+    }
+
     portfolio_items.append(current_value)
     portfolio_items.append(percent_value)
+    portfolio_items.append(backtest_time_value)
     records = portfolio_items
 
     try:
