@@ -173,6 +173,8 @@ def main(event, context):
     current_value = message['current_value']
     portfolio_id = message['portfolio_id']
     portfolio = message['portfolio']
+    buys = message['buys']
+    sells = message['sells']
     algorithm = message['algorithm']
     exchange = message['exchange']
     backtest_time = message['backtest-time']
@@ -185,7 +187,7 @@ def main(event, context):
 
     # if env == "backtest":
         # time.sleep(.05)
-    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
+    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, buys, backtest_time)
         # write_mysql(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_es(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
