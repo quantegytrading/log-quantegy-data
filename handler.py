@@ -183,6 +183,15 @@ def main(event, context):
 
     print("current_value = " + str(current_value))
     print("portfolio = " + portfolio)
+    portfolio_contents = dict(filter(lambda elem: elem[1] > 0, portfolio))
+    print("portfolio_contents = " + str(portfolio_contents))
+    portfolio_contents_list = []
+    for key in portfolio_contents.keys():
+        value = portfolio_contents.get(key)
+        portfolio_contents_list.append(str(key) + ": " + str(value))
+    print("portfolio_contents_list = " + str(portfolio_contents))
+
+
     write_client = session.client('timestream-write', config=Config(read_timeout=20, max_pool_connections=5000, retries={'max_attempts': 10}))
 
     # if env == "backtest":
