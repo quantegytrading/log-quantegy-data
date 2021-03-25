@@ -182,7 +182,7 @@ def main(event, context):
     print(message)
 
     print("current_value = " + str(current_value))
-    print("portfolio = " + portfolio)
+    print("portfolio = " + str(portfolio))
     portfolio_list = []
     for key in portfolio.keys():
         value = portfolio.get(key)
@@ -195,7 +195,7 @@ def main(event, context):
 
     # if env == "backtest":
         # time.sleep(.05)
-    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, buys, backtest_time)
+    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio_list, backtest_time)
         # write_mysql(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_es(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
