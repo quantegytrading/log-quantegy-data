@@ -99,7 +99,7 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
     # backtest_datetime = datetime.datetime.fromtimestamp(int(backtest_time)/1000)
     # backtest_datetime_str = backtest_datetime.strftime("%m/%d/%Y, %H:%M:%S")
 
-    portfolioj = json.loads(portfolio)
+    # portfolioj = json.loads(portfolio)
     percent_value = (((float(current_value)/10000.0) * 100.0) - 100.0)
 
     dimensions = [
@@ -114,7 +114,7 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
 
     ]
     portfolio_items = []
-    for elem in portfolioj:
+    for elem in portfolio:
         item = {
             'Dimensions': dimensions,
             'MeasureName': 'portfolio_item',
