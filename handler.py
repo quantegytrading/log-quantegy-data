@@ -172,7 +172,7 @@ def main(event, context):
     message = json.loads(event['Records'][0]['Sns']['Message'])
     current_value = message['current_value']
     portfolio_id = message['portfolio_id']
-    portfolio = message['portfolio']
+    portfolio = json.loads(message['portfolio'])
     buys = message['buys']
     sells = message['sells']
     algorithm = message['algorithm']
