@@ -11,7 +11,6 @@ import mysql.connector
 import boto3
 
 
-
 def current_milli_time():
     return str(round(time.time() * 1000))
 
@@ -89,7 +88,7 @@ def write_mysql(current_value, algorithm, portfolio_id, portfolio, backtest_time
 #     # print(es.get(index="quantegy-backtest", doc_type="_doc", id="5"))
 
 
-def write_records(client, current_value, algorithm, env, portfolio_id, exchange, data_type, portfolio,
+def write_records(client, current_value, btc_value, algorithm, env, portfolio_id, exchange, data_type, portfolio,
                       backtest_time):
 
     print("Writing records to " + env)
@@ -133,6 +132,14 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
         'Time': current_time
     }
 
+    btc_value = {
+        'Dimensions': dimensions,
+        'MeasureName': 'btc_value',
+        'MeasureValue': btc_value,
+        'MeasureValueType': 'DOUBLE',
+        'Time': current_time
+    }
+
     percent_value = {
         'Dimensions': dimensions,
         'MeasureName': 'percent_value',
@@ -150,6 +157,7 @@ def write_records(client, current_value, algorithm, env, portfolio_id, exchange,
     }
 
     portfolio_items.append(current_value)
+    portfolio_items.append(btc_value)
     portfolio_items.append(percent_value)
     portfolio_items.append(backtest_time_value)
     records = portfolio_items
@@ -171,6 +179,7 @@ def main(event, context):
     session = boto3.Session()
     message = json.loads(event['Records'][0]['Sns']['Message'])
     current_value = message['current_value']
+    btc_value = message['btc_value']
     portfolio_id = message['portfolio_id']
     portfolio = message['portfolio']
     buys = message['buys']
@@ -190,12 +199,11 @@ def main(event, context):
             portfolio_list.append(str(key) + ": " + str(value))
     print("portfolio_list = " + str(portfolio_list))
 
-
     write_client = session.client('timestream-write', config=Config(read_timeout=20, max_pool_connections=5000, retries={'max_attempts': 10}))
 
     # if env == "backtest":
         # time.sleep(.05)
-    write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio_list, backtest_time)
+    write_records(write_client, str(current_value), btc_value, algorithm, env, portfolio_id, exchange, env, portfolio_list, backtest_time)
         # write_mysql(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_es(str(current_value), algorithm, portfolio_id, portfolio, backtest_time)
         # write_records(write_client, str(current_value), algorithm, env, portfolio_id, exchange, env, portfolio, backtest_time)
