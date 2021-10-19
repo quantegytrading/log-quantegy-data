@@ -93,13 +93,16 @@ def write_records(client, current_value, btc_value, algorithm, env, portfolio_id
 
     print("Writing records to " + env)
     current_time = current_milli_time()
+    cost_basis = 1326.0
 
 
     # backtest_datetime = datetime.datetime.fromtimestamp(int(backtest_time)/1000)
     # backtest_datetime_str = backtest_datetime.strftime("%m/%d/%Y, %H:%M:%S")
 
     # portfolioj = json.loads(portfolio)
-    percent_value = (((float(current_value)/10000.0) * 100.0) - 100.0)
+    percent_value = (((float(current_value)-cost_basis)/cost_basis) * 100.0)
+    btc_percent_value = (((float(btc_value)-cost_basis)/cost_basis) * 100.0)
+
 
     dimensions = [
         {'Name': 'region', 'Value': 'us-east-1'},
